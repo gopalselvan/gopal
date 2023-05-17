@@ -1,0 +1,184 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container">
+    <div class="col-md-12">
+    <div class="row">
+        <div class="col-md-6">
+            <label class="required">Employee Name : </label> @*label*@
+            <input type="text" id="Txt_EmployeeName" class="form-control" /> @*TextBox*@
+        </div>
+    </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label class="required">Father Name : </label>
+                <input type="text" id="Txt_FatherName" class="form-control" />@*TextBox*@
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label class="required">DOB :</label>
+                <input type="date" id="Txt_DOB" class="form-control" />@*Date*@
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label class="required">Employee Designation :</label>
+                <select id="ddl_employedesignation" class="form-control">
+                    <option value="0">Select</option>
+                    <option value="1">Software Developer</option>
+                    <option value="2">Dot Net Developer</option>
+                    <option value="3">PHP Developer</option>
+                    <option value="4">Android Developer</option>  @*DropDown*@
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label class="required">Gender :</label>
+                <input type="radio" id="rb_male" onchange="return MaleChange()" /><label id="lbl_male">Male</label>
+                <input type="radio" id="rb_female" onchange="return FemaleChange()" /><label id="lbl_Female">Female</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label>Employee Skills : </label>
+                <input type="checkbox" id="cb_c" /><label id="lbl_c">C</label>
+                <input type="checkbox" id="cb_cplus" /><label id="lbl_cplus">C++</label>
+                <input type="checkbox" id="cb_Csharp" /><label id="lbl_csharp">C#</label>
+                <input type="checkbox" id="cb_java" /><label id="lbl_java">Java</label>
+                <input type="checkbox" id="cb_php" /><label id="lbl_php">PHP</label>
+            </div>
+        </div>
+        <div class="row">
+           <div class="col-md-6">
+               <input type="button" value="Save" class="btn btn-primary" onclick="return Save()" />
+               <input type="button" value="Clear" onclick="return Clear()" class="btn btn-warning"/>
+               <input type="button" value="Back" onclick="return Back()" class="btn btn-primary" />
+           </div>
+        </div>
+      </div>
+</div>
+@section Scripts
+{
+    <script type="text/javascript">
+        $(function () {
+            //First Time Page Load
+            //$('#rb_male').prop('checked', true);
+             Clear();
+        });
+        function MaleChange() {
+            $('#rb_female').prop('checked',false);  //Female Uncheck
+        }
+        function FemaleChange() {
+            $('#rb_male').prop('checked', false);  //Male Uncheck
+        }
+        function Clear() {
+            $('#Txt_EmployeeName').val("");
+            $('#Txt_FatherName').val("");
+            $('#Txt_DOB').val("");
+            $('#ddl_employedesignation').val("0");
+            $('#rb_male').prop('checked', false);
+            $('#rb_female').prop('checked', false);
+            $('#cb_c').prop('checked', false);
+            $('#cb_cplus').prop('checked', false);
+            $('#cb_Csharp').prop('checked', false);
+            $('#cb_java').prop('checked', false);
+            $('#cb_php').prop('checked', false); 
+            $('#Txt_EmployeeName').focus();
+        }
+        function Save() {
+            var model=[]; //Array object
+            if ($('#Txt_EmployeeName').val()=="") {
+                alert("Please Enter Employee Name");
+                $('#Txt_EmployeeName').focus();
+                return false;
+            }
+            if ($('#Txt_FatherName').val() == "") {
+                alert("Please Enter Father Name");
+                $('#Txt_FatherName').focus();
+                return false;
+            }
+            if ($('#Txt_DOB').val() == "") {
+                alert("Please Enter DOB");
+                $('#Txt_DOB').focus();
+                return false;
+            }
+            if ($('#ddl_employedesignation').val() == "0") {
+                alert("Select Employee Designation");
+                $('#ddl_employedesignation').focus();
+                return false;
+            }
+            if ($('#rb_male').is(":checked") == false && $('#rb_female').is(":checked") == false) {
+                alert("Check Male (or) Female");
+                return false;
+            }
+            var data={};
+            data.EmployeeName = $('#Txt_EmployeeName').val();
+            data.FatherName = $('#Txt_FatherName').val();
+            data.DOB = $('#Txt_DOB').val();
+            data.EmployeeDesignation = $('#ddl_employedesignation').val();
+            if ($('#rb_male').is(":checked")==true) {
+                data.Gender=$('#lbl_male').text();
+            }
+            else {
+                data.Gender = $('#lbl_female').text();
+            }
+            if ($('#cb_c').is(":checked") == true) {
+                data.Skill1 = $('#lbl_c').text();
+            }
+            else {
+                data.Skill1="";
+            }
+            if ($('#cb_cplus').is(":checked") == true) {
+                data.Skill2 = $('#lbl_cplus').text();
+            }
+            else {
+                data.Skill2="";
+            }
+            if ($('#cb_Csharp').is(":checked") == true) {
+                data.Skill3 = $('#lbl_csharp').text();
+            }
+            else {
+                data.Skill3="";
+            }
+            if ($('#cb_java').is(":checked") == true) {
+                data.Skill4 = $('#lbl_java').text();
+            }
+            else {
+                data.Skill4="";
+            }
+            if ($('#cb_php').is(":checked") == true) {
+                data.Skill5 = $('#lbl_php').text();
+            }
+            else {
+                data.Skill5="";
+            }
+            model.push(data);
+            var employee=JSON.stringify(model); //List convert
+            $.ajax({
+                type: 'POST',
+                url: '/api/Home/SaveEmployee',
+                data: employee,
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    //data save alert message show on
+                    if (response[0].result == "Success") {
+                        alert("Data Saved Successfully");
+                        Clear();
+                    }
+                    else {
+                        alert("Something went wrong");
+                        return false;
+                    }
+                }
+            });
+            return false;
+     }
+     function Back() {
+            window.location = "/Home/EmployeeDetails";  //Employee Details
+     }
+    </script>
+}

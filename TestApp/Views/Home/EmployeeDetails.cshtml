@@ -1,0 +1,106 @@
+﻿@{
+    ViewData["Title"] = "EmployeeDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="col-md-6">
+    <input type="button" class="btn btn-primary" value="Add Employee" onclick="return AddEmployee()" /> 
+</div>
+<table class="table table-bordered" id="employeetable">
+    <thead>
+       <tr>
+           <th>SNo</th>
+           <th>Employee Name</th>
+           <th>Father Name</th>
+           <th style="width:80px">DOB</th>
+           <th>Employee Designation</th>
+           <th>Gender</th>
+           <th>Skill1</th>
+           <th>Skill2</th>
+           <th>Skill3</th>
+           <th>Skill4</th>
+           <th>Skill5</th>
+       </tr>
+    </thead>
+</table>
+@section Scripts
+{
+    <script type="text/javascript">
+        $(function () {
+            loadEmployeeDetails("/api/Home/GetEmployeeDetails");
+        });
+        function loadEmployeeDetails(e){
+            //e (event url)
+            var index = 0;
+            $('#employeetable').DataTable({
+                language: {
+                    search: '<div class="pl-2"><small>Search Text</small></div>',
+                    searchPlaceholder: "Type Anything",
+                    lengthMenu: "<div><small>Show entries</small></div> _MENU_"
+                },
+                dom: "<'buttons-top'<'pull-left d-flex'<'mr-2'f><l>><'excel'B>>rt<'bottom'ip>",
+                destroy: true,
+                processing: true,
+                ordering: false,
+                paging: true,
+                "fnInitComplete": function () {
+                    //this.api().columns().every(function () {
+                    //    var that = this;
+                    //    $('input', this.header()).on('keyup change clear', function () {
+                    //        if (that.search() !== this.value) {
+                    //            that.search(this.value, false, false).draw();
+                    //        }
+                    //    });
+                    //});
+                },
+                buttons: [
+                ],
+                pagingType: "full_numbers",
+                searching: true,
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, 'All'],
+                ],
+                ajax: e ? e : "GetEmployeeDetails",//ajax url call
+                "columnDefs": [
+                    { "className": "UsersAdminFilter-dt-left", "targets": "_all" },
+                ],
+                columns: [
+                    {
+                        data: null, render: function (data, type, row) {  //SNo
+                              index=index+1;
+                              return "<label>" + index + "</label>";
+                        }
+                    },
+                    { data: "employeeName" },  //Employee Name
+                    { data: "fatherName" },    //Father Name
+                    { data: "dob" },           //DOB                    
+                    {
+                         data: "employeeDesignation", render: function (data, type, row) {  //EmployeeDesignation
+                             if (row.employeeDesignation=="1") {
+                                return "<label>Software Developer</label>";
+                             }
+                             else if (row.employeeDesignation == "2") {
+                                return "<label>Dot Net Developer</label>";
+                             }
+                             else if (row.employeeDesignation == "3") {
+                                return "<label>PHP Developer</label>";
+                            }
+                            else {
+                                return "<label>Android Developer</label>";
+                            }
+                          }
+                     },
+                     { data: "gender" },//Gender
+                     { data: "skill1" }, //skill1
+                     { data: "skill2" }, //skill2
+                     { data: "skill3" }, //skill3
+                     { data: "skill4" }, //skill4
+                     { data: "skill5" } //skill5
+                ]
+            });
+        }
+        function AddEmployee() {
+            window.location="/Home/Index";  //Save Page
+        }
+    </script>
+}
